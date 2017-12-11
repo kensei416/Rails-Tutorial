@@ -1,24 +1,21 @@
-# README
+# Rails Tutorial sample
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## how to use
 
-Things you may want to cover:
+bundle install --without production# Rails Tutorial sample
 
-* Ruby version
+## how to use
 
-* System dependencies
+bundle install --without production
 
-* Configuration
+rails db:migrate
 
-* Database creation
+rails test
 
-* Database initialization
+rails server
 
-* How to run the test suite
+rails db:migrate
 
-* Services (job queues, cache servers, search engines, etc.)
+rails test
 
-* Deployment instructions
-
-* ...
+rails server
