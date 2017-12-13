@@ -1,0 +1,102 @@
+seesionメソッドで保存した情報は一時的だが自動的に安全
+
+cookiesメソッドは永続化するがセッションハイジャックの危険あり
+
+## セッションハイジャック
+
+###概要
+ - 記憶トークンを奪う
+
+### 方法
+
+1. パケットスニッファというソフト使ってcookieから取り出す
+
+2. データベースから記憶トークンを取り出す
+
+3. xssを使う
+
+### 対策
+
+1. SSLの適用によるデータの暗号化
+
+2. 記憶トークンのハッシュ値をデータベースに保存するようにする。
+
+3. 方法の三番目はrailsによって自動で対策される
+
+4. 二次被害を防ぐために、ログアウトした時にトークンを更し、
+　　セキュリティ上重要なものはデジタル署名を行うようにする。
+
+### 永続セッション仕様
+
+1. 記憶トークンにはランダムな文字列を生成してよういる
+
+2.　ブラウザのcookiesにトークンを保存する時は、有効期限を設定する
+
+3.　トークンはハッシュ値に変換してからデータベースに保存する
+
+4.　ブラウザのcookiesに保存するユーザーIDは暗号化しておく。
+
+5. 永続ユーザーIDを含むcookiesを受け取ったら、そのIDでデータベースを
+　　検索し、記憶トークンのcookiesがデータベース内のハッシュ値と
+　　一致することを確認する。
+
+### 作成
+
+1. usersテーブルに記憶トークンのハッシュを保存するためのdigestを作る
+
+ - rails g migration add_remember_digest_to_users remember_digest:string
+ - rails db:migrate
+　　
+2. ランダムトークンを返すメソッドを作る
+
+ - def User.new_token
+     SecureRandom.urlsafe_base64
+   end
+
+3. rememberメソッドの実装
+　　
+ -  attr_accessor :remember_token -　仮想なremember_tokenを実装するため
+
+ -　　def remember
+      self.remember_token = ... - selfを使わずに呼ぶとローカルなremember_tokenを
+     　　　　　　　　　　　　　　　　　作成してしますため
+
+      update_attribute(:remember_digest, ...) - remember_digestがわからない、なぜでてきたのか？
+
+
+4. クッキーの期限設定　
+
+ - cookies.permanent[:remember_token] = .... - 20.years.from_nowに設定される
+
+5. データの暗号化
+
+- cookies.permanent.signed[:user_id] = user.id - 期限と署名付きcookie
+
+- User.find_by(id: cookies.signed[:user_id]) - これでcookiesからユーザを取り出せます
+
+- 渡されたトークンがダイジェストと一致したらtrueを返す
+  def authenticated?(remember_token)
+    # remember_digestはself.remember_digestと同じ使い方です。
+    remember_digestの属性はデータベースのカラムに対応しているため、
+    activeRecordによって簡単に取得したり保存できます。
+    BCrypt::Password.new(remember_digest).is_password?(remember_token)
+  end
+
+6. セッションの違い
+
+　　#current_userは現在一時セッションしか扱っていないので
+　　このままだと正常に動きません
+ - @current_user ||= User.find(id: session[:user_id])
+
+- 解決策
+  # 記憶トークンcookieに対応するユーザーを返す
+  if (user_id = session[:user_id])
+    @current_user ||= User.find_by(id: user_id)
+  elsif (user_id = cookies.signed[:user_id])
+    user = User.find_by(id: user_id)
+    if user && user.authenticated?(cookies[:remember_token])
+      log_in user
+      @current_user = user
+    end
+  end
+ 
