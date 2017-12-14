@@ -1,0 +1,4 @@
+   post password_resets_path,
+   patch password_reset_path(user.reset_token),
+
+   なぜresetsが単数になっているのか？
