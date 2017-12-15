@@ -19,4 +19,14 @@ test "index as non-admin" do
     get users_path
     assert_select 'a', text: 'delete', count: 0
   end
+
+  test "should reidrect following when not logged in" do
+    get following_user_path(@user)
+    assert_redirected_to login_url
+  end
+
+  test "should redirect followers when not logged in" do
+    get followers_user_path(@user)
+    assert_redirected_to login_url
+  end
 end
