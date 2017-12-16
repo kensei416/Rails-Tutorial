@@ -15,7 +15,3 @@ rails db:migrate
 rails test
 
 rails server
-
-## URL
-
-Heroku: https://young-wildwood-94433.herokuapp.com
