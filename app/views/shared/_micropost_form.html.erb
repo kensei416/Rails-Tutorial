@@ -17,4 +17,8 @@
       alert("Maximum file size is 5MB. Please choose a smaller file");
     }
   });
+   
+  if( document.querySelector(".follow") || document.querySelector(".unfollow")) {
+    $("#micropost_content").text($(".user_id").text())
+  }
 </script>
