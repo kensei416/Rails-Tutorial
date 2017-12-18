@@ -33,7 +33,7 @@ malory:
 hide:
   name: hide Archer
   email: hide@example.gov
-  userid: hide21
+  userid: hide-21
   password_digest: <%= User.digest('password') %>
   activated: true
   activated_at: <%= Time.zone.now %>

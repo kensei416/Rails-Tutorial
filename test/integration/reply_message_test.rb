@@ -16,7 +16,7 @@ class ReplyMessageTest < ActionDispatch::IntegrationTest
       post microposts_path, params: { micropost: { content: "@#{@ohter_user.userid} Hello World" }}
     end
     
-    assert "@hide21 Hello World", response.body
+    assert "@#{@ohter_user} Hello World", response.body
 
     delete user_path(@user)
     log_in_as(@ohter_user)
