@@ -15,3 +15,4 @@ rails db:migrate
 rails test
 
 rails server
+# git-practice
