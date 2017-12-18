@@ -11,7 +11,7 @@ class UsersController < ApplicationController
   end
 
   def index
-    @users = User.search(params[:search]).where(activated: true).paginate(page: params[:page])
+    @users = User.search(User, params[:search]).where(activated: true).paginate(page: params[:page])
   end
 
   def new
