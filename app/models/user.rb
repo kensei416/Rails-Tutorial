@@ -88,6 +88,14 @@ class User < ApplicationRecord
     following.include?(other_user)
   end
 
+  def search(search) 
+    if search
+      User.where(['name LIKE?', "%#{search}%"])
+    else
+      Project.all
+    end
+  end
+
 
   private 
 
