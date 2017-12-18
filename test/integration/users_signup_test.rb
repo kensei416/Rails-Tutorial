@@ -15,7 +15,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
                             password_confirmation: "bar" }}
     end
     assert_select 'div #error_explanation'
-    assert_select 'div.field_with_errors', 8
+    assert_select 'div.field_with_errors', 10
     assert_template 'users/new'
   end
 
@@ -24,6 +24,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     assert_difference "User.count", 1 do
       post users_path, params: { user: { name: "Example User" ,
                           email: "user@example.com",
+                          userid: "example",
                           password: "user@example.com",
                           password: "password",
                           password_confirmation: "password" }}

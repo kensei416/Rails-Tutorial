@@ -4,9 +4,12 @@ class MicropostsController < ApplicationController
 
   def create
     @micropost = current_user.microposts.build(micropost_params)
+    if @micropost.content.match(/@\w+/) 
+      @micropost.in_reply_to = @micropost.content.match(/@([\w-]+)/)[1]
+    end
     if @micropost.save
       flash[:success] = "Micropost created!"
-      redirect_to root_url
+      redirect_back(fallback_location: root_url)
     else
       @feed_items =[]
       render 'static_pages/home'

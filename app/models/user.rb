@@ -12,11 +12,11 @@ class User < ApplicationRecord
   before_save   :downcase_email
   before_create :create_activation_digest
   validates :name, presence: true, length: { maximum: 50 }
-  validates :name,  presence: true, length: { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
   validates :email, presence: true, length: { maximum: 255 },
                     format: { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false}
+  validates :userid, presence: true, length: { maximum: 15 }, uniqueness: true                   
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 
@@ -67,10 +67,11 @@ class User < ApplicationRecord
   end
 
   def feed
-    following_ids = "SELECT followed_id FROM relationships
-                    WHERE follower_id = :user_id"
-    Micropost.where("user_id IN (#{following_ids})
-        OR user_id = :user_id", user_id: id)
+    # following_ids = "SELECT followed_id FROM relationships
+    #                 WHERE follower_id = :user_id"
+    # Micropost.where("user_id IN (#{following_ids})
+    #     OR user_id = :user_id", user_id: id)
+    Micropost.where("user_id IN (?) OR user_id = ? OR in_reply_to = ?", following_ids, id, userid)
   end
 
   def follow(other_user)

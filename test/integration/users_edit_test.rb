@@ -15,7 +15,7 @@ class UsersEditTest < ActionDispatch::IntegrationTest
                             password_confirmation: "bar" }}
     
    assert_template 'users/edit'
-   assert_select 'div.alert', "The form contains 4 errors"
+   assert_select 'div.alert', "The form contains 5 errors"
   end                            
 
   test "successfule edit" do
@@ -26,6 +26,7 @@ class UsersEditTest < ActionDispatch::IntegrationTest
     email = "foo@bar.com"
     patch user_path(@user), params:{ user: { name: name,
                             email: email,
+                            userid: "sample",
                             password: "",
                             password_confirmation: ""}}
     assert_not flash.empty?
@@ -45,6 +46,7 @@ class UsersEditTest < ActionDispatch::IntegrationTest
     email = "foo@bar.com"
     patch user_path(@user), params: { user: {name: name,
                            email: email,
+                           userid: "sample",
                            password: "",
                            password_confirmation: ""}}
     assert_not flash.empty?
