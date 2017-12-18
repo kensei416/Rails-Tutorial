@@ -88,6 +88,18 @@ class User < ApplicationRecord
     following.include?(other_user)
   end
 
+  def self.search(type, search) 
+    if search
+      if type == User
+        type.where(["name LIKE?", "%#{search}%"])
+      elsif type == Micropost
+        type.where(["content LIKE?", "%#{search}%"])    
+      end
+    else
+      type.all
+    end
+  end
+
 
   private 
 
